@@ -1,0 +1,29 @@
+########   ARQUIVO docker-compose.yml   ##################
+version: '3'
+services:
+  cofre:
+    image: vaultwarden/server:latest
+    container_name: cofre
+    volumes:
+      - "/vw-data/:/data/"
+    ports:
+      - "8000:80"
+    restart: unless-stopped
+    environment:
+      - DOMAIN=https://cofre.empresa.com.br
+      - SENDS_ALLOWED=true
+      - DISABLE_ICON_DOWNLOAD=false
+      - SIGNUPS_ALLOWED=true
+      - ORG_CREATION_USERS=luciano@citrait.com.br,fulano@gmail.com
+      - INVITATIONS_ALLOWED=true
+      - INVITATION_ORG_NAME=Minha Empresa
+      - ORG_GROUPS_ENABLED=true
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_FROM=notificacoes@empresa.com.br
+      - SMTP_FROM_NAME=Cofre de Senhas
+      - SMTP_SECURITY=starttls
+      - SMTP_PORT=587
+      - SMTP_USERNAME=notificacoes@empresa.com.br
+      - SMTP_PASSWORD=senhaSegura
+      - SMTP_AUTH_MECHANISM=Plain
+      - SMTP_DEBUG=false
