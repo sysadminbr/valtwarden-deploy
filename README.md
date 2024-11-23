@@ -16,7 +16,7 @@ curl https://get.docker.com | sudo bash
 
 ### Clonar este repositório
 ```
-git clone https://github.com/sysadminbr/vaultwarden-deploy
+git clone https://github.com/sysadminbr/valtwarden-deploy.git
 ```  
 
 ### Acessar a pasta do projeto
