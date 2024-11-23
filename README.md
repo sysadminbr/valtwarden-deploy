@@ -16,7 +16,7 @@ curl https://get.docker.com | sudo bash
 
 ### Clonar este repositório
 ```
-git clone https://github.com/sysadminbr/valtwarden-deploy.git
+git clone https://github.com/sysadminbr/vaultwarden-deploy.git
 ```  
 
 ### Acessar a pasta do projeto
@@ -100,9 +100,7 @@ server {
         listen 80;
         listen [::]:80;
         location / {
-		proxy_set_header X-Real-IP       $remote_addr;
-        	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_pass http://vaultwarden;
+                rewrite ^ https://$host$uri redirect;
         }
 }
 # definição do endpoint https
@@ -112,8 +110,8 @@ server {
         ssl_certificate /etc/ssl/private/vaultwarden.crt;
         ssl_certificate_key /etc/ssl/private/vaultwarden.key;
         location / {
-		proxy_set_header X-Real-IP       $remote_addr;
-        	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP       $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_pass http://vaultwarden;
         }
 }
