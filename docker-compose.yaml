@@ -5,7 +5,7 @@ services:
     image: vaultwarden/server:latest
     container_name: cofre
     volumes:
-      - "/vw-data/:/data/"
+      - vaultwarden-data:/data/
     ports:
       - "8000:80"
     restart: unless-stopped
@@ -27,3 +27,5 @@ services:
       - SMTP_PASSWORD=senhaSegura
       - SMTP_AUTH_MECHANISM=Plain
       - SMTP_DEBUG=false
+volumes:
+  vaultwarden-data:
