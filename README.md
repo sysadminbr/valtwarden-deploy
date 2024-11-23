@@ -129,20 +129,30 @@ sudo nginx -s reload
 ```
 
 
-### Acesse o vaultwarden pelo navegador  
+### Acesse o vaultwarden pelo navegador    
+  
 Acesse o navegador usando o endereço https://cofre.empresa.com.br.
 Lembre-se de que deve ter registrado o nome "cofre.empresa.com.br" no DNS.  
 
 
-### Impedindo o auto-registro de novos usuários  
-Após o deploy inicial e registro da primeira conta administrador, edite novamente o arquivo docker-compose.yaml e altere o parâmetro SIGNUPS_ALLOWED=true para SIGNUPS_ALLOWED=false. 
-Depois de ter alterado o parâmetro, ainda na mesma pasta do projeto sinalize o docker para recarregar a configuração.
+### Impedindo o auto-registro de novos usuários    
+Após o deploy inicial e registro da primeira conta administrador, edite novamente o arquivo docker-compose.yaml e altere o parâmetro SIGNUPS_ALLOWED de true para false.
 ```
+# antes
+SIGNUPS_ALLOWED=false
+
+# depois
+SIGNUPS_ALLOWED=false
+```
+  
+Agora sinalize o docker para recarregar a configuração.
+```
+# recarregar o container com a nova configuração
 sudo docker compose up -d
 ```
 
 
-### Download dos clientes do cofre  
+### Download dos clientes do cofre    
 Para download dos clientes do cofre (browser plugin, desktop app, mobile, ...) visite a página https://bitwarden.com/download/.
 
 
