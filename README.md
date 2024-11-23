@@ -155,7 +155,10 @@ sudo docker compose up -d
 ### Download dos clientes do cofre    
 Para download dos clientes do cofre (browser plugin, desktop app, mobile, ...) visite a página https://bitwarden.com/download/.
 
-
+# Documentação Oficial  
+https://github.com/dani-garcia/vaultwarden
+https://github.com/dani-garcia/vaultwarden/wiki
+https://bitwarden.com/download/
 
 
 
