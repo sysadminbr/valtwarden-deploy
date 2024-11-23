@@ -1,68 +1,75 @@
-# Deploy do VaultWarden 
-Deploy para 
+# Deploy do VaultWarden via docker compose
 
-VaultWarden - Deployment
+# Resumo  
+O vaultwarden é uma implementação alternativa e leve do servidor bitwarden, compatível com a API original e escrito na linguagem Rust, perfeito para hospedar por conta própria e também é compatível com os plugins e clientes oficiais do Bitwarden.
 
-
-Resumo
-
-
-Justificativa
+# Justificativa  
+Criamos este deploy para já trazer diversas opções pré-definidas que você provavelmente irá usar em produção. A documentação oficial do Vaultwarde traz exemplos simples e uma documentação extensa. Este repositório serve como um facilitador do deploy. Para casos de uso mais avançados, indicamos que use a documentação oficial do Vaultwarden como guia.  
 
 
+# Instalação  
 
-Pré-requisitos
-
-
-
-=== Instalação do Docker
+## Instale o docker
 ```
 curl https://get.docker.com | sudo bash
 ```
 
-
-=== Deploy do Vaulwarden container via docker-compose
-
-criar a pasta onde estará os arquivos do projeto
+## Clonar este repositório
 ```
-mkdir -p docker_apps/vaultwarden && cd docker_apps/vaultwarden
+git clone https://github.com/sysadminbr/vaultwarden-deploy
 ```
 
-Criar o arquivo docker-compose.yml com o seguinte conteúdo
+## Acessar a pasta do projeto
+```
+cd vaultwarden-deploy
+```
 
-Execute o comando abaixo para fazer o deploy e começar a rodar o Docker
+## Editar e ajustar os parâmetros do Vaultwarden
+```
 
+```
+
+
+## Realizar o deploy
 ```
 sudo docker compose up -d
 ```
 
 
-Configure o nginx com um certificado SSL (auto-assinado)
-
-Gerar o certificado SSL
+## (Opcional) Gerar um certificado auto-assinado para o nginx servir HTTPS
 ```
+# altere cofre.empresa.com.br para um domínio seu
 openssl req -new -x509 -newkey rsa:4096 -keyout vaultwarden.key -out vaultwarden.crt -nodes -subj "/CN=cofre.empresa.com.br" -days 3650 -addext "subjectAltName=DNS:cofre.empresa.com.br"
-```
 
-agora copie o certificado e chave gerados para a pasta comum
-```
+# agora copie o certificado e chave gerados para a pasta comum
 sudo cp vaultwarden.* /etc/ssl/private/
 ```
 
-Instalar e Configurar o nginx
+## Instale o nginx
 ```
 sudo apt install nginx -y
 ```
 
 
 
-Configurar o nginx 
-
-editar o arquivo /etc/nginx/sites-enabled/default com o seguinte conteúdo
-
+## Configurar o nginx 
+### Edite o arquivo /etc/nginx/sites-enabled/default com o seguinte conteúdo
+```
+# onde buscar o upstream (porta do container)
 upstream vaultwarden{
         server 127.0.0.1:8000;
 }
+# definição do endpoint http, redirecionando para https
+server {
+        listen 80;
+        listen [::]:80;
+        location / {
+		proxy_set_header X-Real-IP       $remote_addr;
+        	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_pass http://vaultwarden;
+        }
+}
+# definição do endpoint https
 server {
         listen 443 ssl;
         listen [::]:443 ssl ;
@@ -73,8 +80,8 @@ server {
         	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_pass http://vaultwarden;
         }
-
 }
+```
 
 
 
