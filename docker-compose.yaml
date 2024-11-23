@@ -1,9 +1,10 @@
 ########   ARQUIVO docker-compose.yml   ##################
+# Reference: https://github.com/dani-garcia/vaultwarden/blob/main/.env.template
 version: '3'
 services:
   cofre:
     image: vaultwarden/server:latest
-    container_name: cofre
+    container_name: vaultwarden
     volumes:
       - vaultwarden-data:/data/
     ports:
