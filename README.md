@@ -1,4 +1,4 @@
-# Deploy do VaultWarden via docker compose
+# Deploy do Vaultwarden via docker compose
 
 # Resumo  
 O vaultwarden é uma implementação alternativa e leve do servidor bitwarden, compatível com a API original e escrito na linguagem Rust, perfeito para hospedar por conta própria e também é compatível com os plugins e clientes oficiais do Bitwarden.
@@ -9,51 +9,87 @@ Criamos este deploy para já trazer diversas opções pré-definidas que você p
 
 # Instalação  
 
-## Instale o docker
+### Instale o docker
 ```
 curl https://get.docker.com | sudo bash
 ```
 
-## Clonar este repositório
+### Clonar este repositório
 ```
 git clone https://github.com/sysadminbr/vaultwarden-deploy
-```
+```  
 
-## Acessar a pasta do projeto
+### Acessar a pasta do projeto
 ```
 cd vaultwarden-deploy
 ```
 
-## Editar e ajustar os parâmetros do Vaultwarden
+### Editar e ajustar os parâmetros do Vaultwarden
+```
+vi docker-compose.yaml
+
+# exemplo:
+version: '3'
+services:
+  cofre:
+    image: vaultwarden/server:latest
+    container_name: cofre
+    volumes:
+      - vaultwarden-data:/data/
+    ports:
+      - "8000:80"
+    restart: unless-stopped
+    environment:
+      - DOMAIN=https://cofre.empresa.com.br
+      - SENDS_ALLOWED=true
+      - DISABLE_ICON_DOWNLOAD=false
+      - SIGNUPS_ALLOWED=true
+      - ORG_CREATION_USERS=luciano@citrait.com.br,fulano@gmail.com
+      - INVITATIONS_ALLOWED=true
+      - INVITATION_ORG_NAME=Minha Empresa
+      - ORG_GROUPS_ENABLED=true
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_FROM=notificacoes@empresa.com.br
+      - SMTP_FROM_NAME=Cofre de Senhas
+      - SMTP_SECURITY=starttls
+      - SMTP_PORT=587
+      - SMTP_USERNAME=notificacoes@empresa.com.br
+      - SMTP_PASSWORD=senhaSegura
+      - SMTP_AUTH_MECHANISM=Plain
+      - SMTP_DEBUG=false
+volumes:
+  vaultwarden-data:
+	
 ```
 
-```
 
-
-## Realizar o deploy
+### Realizar o deploy
 ```
 sudo docker compose up -d
 ```
 
 
-## (Opcional) Gerar um certificado auto-assinado para o nginx servir HTTPS
+### (Opcional) Gerar um certificado auto-assinado para o nginx servir HTTPS
 ```
-# altere cofre.empresa.com.br para um domínio seu
+# altere cofre.empresa.com.br para outro domínio
 openssl req -new -x509 -newkey rsa:4096 -keyout vaultwarden.key -out vaultwarden.crt -nodes -subj "/CN=cofre.empresa.com.br" -days 3650 -addext "subjectAltName=DNS:cofre.empresa.com.br"
 
-# agora copie o certificado e chave gerados para a pasta comum
+# agora copie o certificado e chave gerados para a pasta comum de certificados
 sudo cp vaultwarden.* /etc/ssl/private/
+
+# e altere a permissão do certificado e chave para o nginx conseguir lê-los
+sudo chown www-data:www-data /etc/ssl/private/vaultwarden.*
 ```
 
-## Instale o nginx
+
+### Instale o nginx
 ```
 sudo apt install nginx -y
 ```
 
 
-
-## Configurar o nginx 
-### Edite o arquivo /etc/nginx/sites-enabled/default com o seguinte conteúdo
+### Configurar o nginx 
+#### Edite o arquivo /etc/nginx/sites-enabled/default com o seguinte conteúdo
 ```
 # onde buscar o upstream (porta do container)
 upstream vaultwarden{
@@ -83,21 +119,31 @@ server {
 }
 ```
 
+### Reinicie o serviço do nginx  
+```
+# testar a configuração antes de reiniciar
+sudo nginx -t
+
+# reiniciar
+sudo nginx -s reload
+```
 
 
+### Acesse o vaultwarden pelo navegador  
+Acesse o navegador usando o endereço https://cofre.empresa.com.br.
+Lembre-se de que deve ter registrado o nome "cofre.empresa.com.br" no DNS.  
 
 
+### Impedindo o auto-registro de novos usuários  
+Após o deploy inicial e registro da primeira conta administrador, edite novamente o arquivo docker-compose.yaml e altere o parâmetro SIGNUPS_ALLOWED=true para SIGNUPS_ALLOWED=false. 
+Depois de ter alterado o parâmetro, ainda na mesma pasta do projeto sinalize o docker para recarregar a configuração.
+```
+sudo docker compose up -d
+```
 
 
-
-== Impedindo o auto-registro de novos usuários
-
-* Após o deploy inicial e registro da primeira conta adm, edite novamente o arquivo docker-compose.yml e altere o parâmetro SIGNUPS_ALLOWED=true para SIGNUPS_ALLOWED=false. 
-
-
-=== Download dos clientes do cofre (browser plugin, desktop app, mobile, ...)
-
-https://bitwarden.com/download/
+### Download dos clientes do cofre  
+Para download dos clientes do cofre (browser plugin, desktop app, mobile, ...) visite a página https://bitwarden.com/download/.
 
 
 
