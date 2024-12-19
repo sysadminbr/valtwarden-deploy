@@ -15,6 +15,7 @@ services:
       - SENDS_ALLOWED=true
       - DISABLE_ICON_DOWNLOAD=false
       - SIGNUPS_ALLOWED=true
+      - SIGNUPS_DOMAINS_WHITELIST=citrait.com.br,example.net
       - ORG_CREATION_USERS=luciano@citrait.com.br,fulano@gmail.com
       - INVITATIONS_ALLOWED=true
       - INVITATION_ORG_NAME=Minha Empresa
